@@ -10,18 +10,25 @@ const audio = new Audio('./assets/audio/game.mp3');
 const backgroundImage = new Image();
 backgroundImage.src = "./assets/images/bg.jpg";
 
+
 const shipImage = new Image();
 shipImage.src = "./assets/images/rocket-147466_640.png";
 xBaseSpeed = 1;
 yBaseSpeed = -1;
-
 let shipRotation = 0;
 let rotationSpeed = 5;
-
 
 const shotImage = new Image();
 shotImage.src = "./assets/images/shot.png"
 let shots = [];
+
+
+const enemyArray = [];
+const enemyImage = new Image();
+enemyImage.src = "./assets/images/enemy_1.png";
+let enemySpeed = 1;
+let enemyFrequency = 2000;
+
 
 
 
@@ -31,6 +38,7 @@ window.onload = () => {
   
 function start() {
     updateCanvas();
+    setInterval(createEnemy, enemyFrequency);
 }
   
 function updateCanvas() {
@@ -40,6 +48,11 @@ function updateCanvas() {
         ctx.drawImage(shotImage, shots[iterator].xPos, shots[iterator].yPos, 10, 10);
         shots[iterator].yPos -= shots[iterator].ySpeed;
         shots[iterator].xPos += shots[iterator].xSpeed;
+    }
+
+    for (iterator = 0; iterator < enemyArray.length; iterator += 1) {
+        console.log(enemyArray[iterator])
+        ctx.drawImage(enemyImage, enemyArray[iterator].enemyXPos, enemyArray[iterator].enemyYPos, enemyArray[iterator].enemyWidth, enemyArray[iterator].enemyHeight);
     }
 
     ctx.save();
@@ -65,6 +78,9 @@ document.addEventListener("keydown", event => {
       };
 })
 
+
+
+
 function rotateShipClockwise() {
     shipRotation -= rotationSpeed;
 }
@@ -86,9 +102,20 @@ class Shot {
         this.xSpeed = Math.cos(radians) * xBaseSpeed
         console.log(Math.cos(radians) * xBaseSpeed)
         this.ySpeed = Math.sin(radians) * yBaseSpeed;
-        // this.xSpeed = xBaseSpeed * Math.sin(shipRotationAtShot);
-        // this.ySpeed = yBaseSpeed * Math.cos(shipRotationAtShot);
         this.xPos = 695;
         this.yPos = 395;
     }
 }
+
+class Enemy {
+    constructor(xPos, yPos) {
+        this.enemyXPos = xPos;
+        this.enemyYPos = yPos;
+    };
+    enemyHeight = 60;
+    enemyWidth = 30;
+  }
+  
+  function createEnemy() {
+    enemyArray.push(new Enemy(0,0));
+  }
