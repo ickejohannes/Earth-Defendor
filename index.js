@@ -1,6 +1,9 @@
 const canvas = document.querySelector("canvas");
 let ctx = canvas.getContext("2d");
 
+const audio = new Audio('./assets/audio/game.mp3');
+
+
 const img = new Image();
 img.src = "./assets/images/bg.jpg";
 
@@ -70,6 +73,7 @@ function rotateShipCounterClockwise() {
 
 function shoot() {
     shots.push(new Shot(shipRotation));
+    audio.play();
    
 }
 
