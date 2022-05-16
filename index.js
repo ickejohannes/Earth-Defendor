@@ -6,6 +6,7 @@ let ctx = canvas.getContext("2d");
 
 const audio = new Audio('./assets/audio/game.mp3');
 
+let score = 0;
 
 const backgroundImage = new Image();
 backgroundImage.src = "./assets/images/bg.jpg";
@@ -16,16 +17,18 @@ shipImage.src = "./assets/images/rocket-147466_640.png";
 let playerPosX = 700;
 let playerPosY = 400;   
 let playerWidth = 50;
-let playerHeigth = 50;
-
-xBaseSpeed = 1;
-yBaseSpeed = -1;
+let playerHeight = 50;
 let shipRotation = 0;
-let rotationSpeed = 5;
+let rotationSpeed = 10;
+
 
 const shotImage = new Image();
 shotImage.src = "./assets/images/shot.png"
 let shots = [];
+let shotWidth = 10;
+let shotHeight = 10;
+xBaseSpeed = 2;
+yBaseSpeed = -2;
 
 
 const enemyArray = [];
@@ -48,16 +51,26 @@ function start() {
   
 function updateCanvas() {
     ctx.drawImage(backgroundImage, 0, 0);
+    
    
     for (iterator = 0; iterator < shots.length; iterator += 1) {
-        ctx.drawImage(shotImage, shots[iterator].xPos, shots[iterator].yPos, 10, 10);
-        shots[iterator].yPos -= shots[iterator].ySpeed;
-        shots[iterator].xPos += shots[iterator].xSpeed;
+        let shot = shots[iterator];
+        for (i = 0; i < enemyArray.length; i += 1) {
+            let enemy = enemyArray[i];
+            
+            if (collisionCheck(shot.xPos, shot.yPos, shotWidth, shotHeight, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight)) {
+                enemyArray.splice(i, 1);
+                score += 1;
+            }
+        }
+        ctx.drawImage(shotImage, shot.xPos, shot.yPos, shotWidth, shotHeight);
+        shot.yPos -= shot.ySpeed;
+        shot.xPos += shot.xSpeed;
     }
 
     for (iterator = 0; iterator < enemyArray.length; iterator += 1) {
         let enemy = enemyArray[iterator];
-        if (collisionCheck(playerPosX, playerPosY, playerWidth, playerHeigth, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight)) {
+        if (collisionCheck(playerPosX, playerPosY, playerWidth, playerHeight, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight)) {
             gameOverPrinter();
         }
         ctx.drawImage(enemyImage, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight);
@@ -173,9 +186,9 @@ function createEnemySpeed(direction) {
     }
 }
 
-function collisionCheck(obj1xPos, obj1yPos, obj1Width, obj1Heigth, obj2xPos, obj2yPos, obj2Width, obj2Height) {
+function collisionCheck(obj1xPos, obj1yPos, obj1Width, obj1Height, obj2xPos, obj2yPos, obj2Width, obj2Height) {
     if (obj1xPos + obj1Width / 2 > obj2xPos - obj2Width / 2 && obj1xPos - obj1Width / 2 < obj2xPos + obj2Width) {
-        if (obj1yPos + obj1Heigth / 2 > obj2yPos - obj2Height / 2 && obj1yPos - obj1Heigth / 2 < obj2yPos + obj2Height)
+        if (obj1yPos + obj1Height / 2 > obj2yPos - obj2Height / 2 && obj1yPos - obj1Height / 2 < obj2yPos + obj2Height)
             return true;
     }
 }
