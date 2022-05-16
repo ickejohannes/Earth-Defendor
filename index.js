@@ -8,6 +8,8 @@ const audio = new Audio('./assets/audio/game.mp3');
 
 let score = 0;
 
+let level = 1;
+
 const backgroundImage = new Image();
 backgroundImage.src = "./assets/images/bg.jpg";
 
@@ -35,7 +37,7 @@ const enemyArray = [];
 const enemyImage = new Image();
 enemyImage.src = "./assets/images/enemy_1.png";
 let enemySpeed = 1;
-let enemyFrequency = 2000;
+let enemyBaseFrequency = 1000;
 
 
 
@@ -46,11 +48,16 @@ window.onload = () => {
   
 function start() {
     updateCanvas();
-    setInterval(createEnemy, enemyFrequency); 
+    intervalID = setInterval(createEnemy, enemyBaseFrequency); 
 }
   
 function updateCanvas() {
+    checkForLevelIncrease();
+
     ctx.drawImage(backgroundImage, 0, 0);
+
+    ctx.font = '30px Arial';
+    ctx.fillText(`Score: ${score}`, 40, 40);
     
    
     for (iterator = 0; iterator < shots.length; iterator += 1) {
@@ -60,6 +67,7 @@ function updateCanvas() {
             
             if (collisionCheck(shot.xPos, shot.yPos, shotWidth, shotHeight, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight)) {
                 enemyArray.splice(i, 1);
+                shots.splice(iterator, 1);
                 score += 1;
             }
         }
@@ -193,14 +201,14 @@ function collisionCheck(obj1xPos, obj1yPos, obj1Width, obj1Height, obj2xPos, obj
     }
 }
 
-/* function collisionCheck(enemyShip) { //25 in beide RIchtungen für Spieler, 60 hoch 30 breit für Enemies
-    if (enemyShip.enemyXPos +15 > playerPosX-25 && enemyShip.enemyXPos -15 < playerPosX+25) {
-        if (enemyShip.enemyYPos +30 > playerPosY-25 && enemyShip.enemyYPos -30 < playerPosY+25 ) {
-            gameOver = true;
-        }
-    }
-} */
-
 function gameOverPrinter() {
     console.log("Game over!");
+}
+
+function checkForLevelIncrease() {
+    if (score > 5 * level) {
+        level += 1;
+        clearInterval(intervalID);
+        setInterval(createEnemy, enemyBaseFrequency/level)
+    }
 }
