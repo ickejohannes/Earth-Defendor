@@ -15,6 +15,8 @@ const shipImage = new Image();
 shipImage.src = "./assets/images/rocket-147466_640.png";
 let playerPosX = 700;
 let playerPosY = 400;   
+let playerWidth = 50;
+let playerHeigth = 50;
 
 xBaseSpeed = 1;
 yBaseSpeed = -1;
@@ -55,6 +57,9 @@ function updateCanvas() {
 
     for (iterator = 0; iterator < enemyArray.length; iterator += 1) {
         let enemy = enemyArray[iterator];
+        if (collisionCheck(playerPosX, playerPosY, playerWidth, playerHeigth, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight)) {
+            gameOverPrinter();
+        }
         ctx.drawImage(enemyImage, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight);
         enemy.enemyXPos += enemy.enemyXSpeed;
         enemy.enemyYPos += enemy.enemyYSpeed;  
@@ -65,7 +70,6 @@ function updateCanvas() {
     ctx.rotate(shipRotation * Math.PI / 180);
     ctx.drawImage(shipImage, -25, -25, 50, 50);
     ctx.restore();
-
 
     requestAnimationFrame(updateCanvas);
 }
@@ -167,4 +171,23 @@ function createEnemySpeed(direction) {
     } else {
         return [-(Math.random()-0.5) , -1];
     }
+}
+
+function collisionCheck(obj1xPos, obj1yPos, obj1Width, obj1Heigth, obj2xPos, obj2yPos, obj2Width, obj2Height) {
+    if (obj1xPos + obj1Width / 2 > obj2xPos - obj2Width / 2 && obj1xPos - obj1Width / 2 < obj2xPos + obj2Width) {
+        if (obj1yPos + obj1Heigth / 2 > obj2yPos - obj2Height / 2 && obj1yPos - obj1Heigth / 2 < obj2yPos + obj2Height)
+            return true;
+    }
+}
+
+/* function collisionCheck(enemyShip) { //25 in beide RIchtungen für Spieler, 60 hoch 30 breit für Enemies
+    if (enemyShip.enemyXPos +15 > playerPosX-25 && enemyShip.enemyXPos -15 < playerPosX+25) {
+        if (enemyShip.enemyYPos +30 > playerPosY-25 && enemyShip.enemyYPos -30 < playerPosY+25 ) {
+            gameOver = true;
+        }
+    }
+} */
+
+function gameOverPrinter() {
+    console.log("Game over!");
 }
