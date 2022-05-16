@@ -39,6 +39,17 @@ enemyImage.src = "./assets/images/enemy_1.png";
 let enemySpeed = 1;
 let enemyBaseFrequency = 1000;
 
+const explosionImage1 = new Image();
+explosionImage1.src = "./assets/images/explosion1.png"
+const explosionImage2 = new Image();
+explosionImage2.src = "./assets/images/explosion2.png"
+const explosionImage3 = new Image();
+explosionImage3.src = "./assets/images/explosion3.png"
+const explosionImage4 = new Image();
+explosionImage4.src = "./assets/images/explosion4.png"
+const explosionWidth = 60;
+const explosionHeigth = 60;
+
 
 
 
@@ -67,6 +78,11 @@ function updateCanvas() {
             
             if (collisionCheck(shot.xPos, shot.yPos, shotWidth, shotHeight, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight)) {
                 enemyArray.splice(i, 1);
+                ctx.drawImage(explosionImage1, enemy.enemyXPos, enemy.enemyYPos, explosionWidth, explosionHeigth);
+                ctx.drawImage(explosionImage2, enemy.enemyXPos, enemy.enemyYPos, explosionWidth, explosionHeigth);
+                /* We could add these two additional explosion stages but they would have to be delayed a bit
+                ctx.drawImage(explosionImage3, enemy.enemyXPos, enemy.enemyYPos, explosionWidth, explosionHeigth);
+                ctx.drawImage(explosionImage4, enemy.enemyXPos, enemy.enemyYPos, explosionWidth, explosionHeigth);*/
                 shots.splice(iterator, 1);
                 score += 1;
             }
