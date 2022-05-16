@@ -1,10 +1,14 @@
 //player laser is from here https://redfoc.com/item/space-shooter-game-assets/
+//sound effects shot and explosion are from here https://www.playonloop.com/sound-effects-for-videos/boom-slam-impact-sounds/
 
 
 const canvas = document.querySelector("canvas");
 let ctx = canvas.getContext("2d");
 
 const audio = new Audio('./assets/audio/game.mp3');
+const playerExplodesSound = new Audio("./assets/audio/playerExplodes.wav");
+const enemyShipExplodesSound = new Audio("./assets/audio/enemyShipExplodes.wav");
+const playerShootsSound = new Audio("./assets/audio/playerShoots.wav");
 
 let score = 0;
 
@@ -83,6 +87,7 @@ function updateCanvas() {
                 /* We could add these two additional explosion stages but they would have to be delayed a bit
                 ctx.drawImage(explosionImage3, enemy.enemyXPos, enemy.enemyYPos, explosionWidth, explosionHeigth);
                 ctx.drawImage(explosionImage4, enemy.enemyXPos, enemy.enemyYPos, explosionWidth, explosionHeigth);*/
+                enemyShipExplodesSound.cloneNode(true).play();
                 shots.splice(iterator, 1);
                 score += 1;
             }
@@ -95,7 +100,11 @@ function updateCanvas() {
     for (iterator = 0; iterator < enemyArray.length; iterator += 1) {
         let enemy = enemyArray[iterator];
         if (collisionCheck(playerPosX, playerPosY, playerWidth, playerHeight, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight)) {
+            ctx.drawImage(explosionImage1, playerPosX, playerPosY, explosionWidth, explosionHeigth);
+            ctx.drawImage(explosionImage1, playerPosX, playerPosY, explosionWidth, explosionHeigth);
+            playerExplodesSound.play();
             gameOverPrinter();
+            return;
         }
         ctx.drawImage(enemyImage, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight);
         enemy.enemyXPos += enemy.enemyXSpeed;
@@ -139,6 +148,7 @@ function rotateShipCounterClockwise() {
 function shoot() {
     shots.push(new Shot(shipRotation));
     audio.play();
+    playerShootsSound.cloneNode(true).play();
    
 }
 
