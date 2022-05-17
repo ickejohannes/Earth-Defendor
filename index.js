@@ -67,6 +67,9 @@ const explosionHeigth = 60;
 // collisionAdjuster allows to increase/decrease size of hit boxes relative to image size. the higher the number the smaller the hitbox
 const collisionAdjuster = 10;
 
+let leftArrowInterval;
+let rightArrowInterval;
+
 
 
 document.addEventListener("keydown", event => {
@@ -81,11 +84,27 @@ document.addEventListener("keydown", event => {
         shoot();
     } else if (event.key == "ArrowLeft") {
         event.preventDefault();
-        rotateShipClockwise();
+        rotationSpeed = 10;
+        rotateShipCounterClockwise();
+        // leftArrowInterval = setInterval(rotateShipCounterClockwise, 100);
     } if (event.key == "ArrowRight") {
         event.preventDefault();
-        rotateShipCounterClockwise();
+        rotationSpeed = 10;
+        rotateShipClockwise();
+        // rightArrowInterval = setInterval(rotateShipClockwise, 100);
       };
+})
+
+document.addEventListener("keyup", event => {
+    if (event.key == "ArrowLeft") {
+        event.preventDefault();
+        clearInterval(leftArrowInterval);
+        rotationSpeed = 0;
+    } else if (event.key == "ArrowRight") {
+        event.preventDefault();
+        clearInterval(rightArrowInterval);
+        rotationSpeed = 0;
+    }
 })
 
 function start() {
@@ -136,7 +155,6 @@ function updateCanvas() {
         if (collisionCheck(playerPosX, playerPosY, playerWidth, playerHeight, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight)) {
             console.log(playerPosX, playerPosY)
             ctx.drawImage(explosionImage1, playerPosX-playerWidth/2-5, playerPosY-playerHeight/2-5, explosionWidth, explosionHeigth);
-            ctx.drawImage(explosionImage1, playerPosX-playerWidth/2-5, playerPosY/playerHeight/2-5, explosionWidth, explosionHeigth);
             playerExplodesSound.play();
             setTimeout(gameOver, 50);
             return;
@@ -161,11 +179,11 @@ function updateCanvas() {
 
 
 function rotateShipClockwise() {
-    shipRotation -= rotationSpeed;
+    shipRotation += rotationSpeed;
 }
 
 function rotateShipCounterClockwise() {
-    shipRotation += rotationSpeed;
+    shipRotation -= rotationSpeed;
 }
 
 
