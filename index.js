@@ -35,7 +35,8 @@ let playerPosY = 400;
 let playerWidth = 50;
 let playerHeight = 50;
 let shipRotation = 0;
-let rotationSpeed = 10;
+const rotationSpeedConst = 15;
+let rotationSpeed = rotationSpeedConst;
 
 
 const shotImage = new Image();
@@ -84,12 +85,12 @@ document.addEventListener("keydown", event => {
         shoot();
     } else if (event.key == "ArrowLeft") {
         event.preventDefault();
-        rotationSpeed = 10;
+        rotationSpeed = rotationSpeedConst;
         rotateShipCounterClockwise();
         // leftArrowInterval = setInterval(rotateShipCounterClockwise, 100);
     } if (event.key == "ArrowRight") {
         event.preventDefault();
-        rotationSpeed = 10;
+        rotationSpeed = rotationSpeedConst;
         rotateShipClockwise();
         // rightArrowInterval = setInterval(rotateShipClockwise, 100);
       };
