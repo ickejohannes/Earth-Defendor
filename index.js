@@ -64,6 +64,9 @@ explosionImage4.src = "./assets/images/explosion4.png"
 const explosionWidth = 60;
 const explosionHeigth = 60;
 
+// collisionAdjuster allows to increase/decrease size of hit boxes relative to image size. the higher the number the smaller the hitbox
+const collisionAdjuster = 10;
+
 
 
 document.addEventListener("keydown", event => {
@@ -131,10 +134,11 @@ function updateCanvas() {
     for (iterator = 0; iterator < enemyArray.length; iterator += 1) {
         let enemy = enemyArray[iterator];
         if (collisionCheck(playerPosX, playerPosY, playerWidth, playerHeight, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight)) {
-            ctx.drawImage(explosionImage1, playerPosX, playerPosY, explosionWidth, explosionHeigth);
-            ctx.drawImage(explosionImage1, playerPosX, playerPosY, explosionWidth, explosionHeigth);
+            console.log(playerPosX, playerPosY)
+            ctx.drawImage(explosionImage1, playerPosX-playerWidth/2-5, playerPosY-playerHeight/2-5, explosionWidth, explosionHeigth);
+            ctx.drawImage(explosionImage1, playerPosX-playerWidth/2-5, playerPosY/playerHeight/2-5, explosionWidth, explosionHeigth);
             playerExplodesSound.play();
-            gameOver();
+            setTimeout(gameOver, 50);
             return;
         }
         ctx.drawImage(enemyImage, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight);
@@ -241,8 +245,8 @@ function createEnemySpeed(direction) {
 }
 
 function collisionCheck(obj1xPos, obj1yPos, obj1Width, obj1Height, obj2xPos, obj2yPos, obj2Width, obj2Height) {
-    if (obj1xPos + obj1Width / 2 > obj2xPos - obj2Width / 2 && obj1xPos - obj1Width / 2 < obj2xPos + obj2Width) {
-        if (obj1yPos + obj1Height / 2 > obj2yPos - obj2Height / 2 && obj1yPos - obj1Height / 2 < obj2yPos + obj2Height)
+    if (obj1xPos + obj1Width / 2 -collisionAdjuster > obj2xPos - obj2Width / 2 && obj1xPos - obj1Width / 2 +collisionAdjuster < obj2xPos + obj2Width) {
+        if (obj1yPos + obj1Height / 2 -collisionAdjuster > obj2yPos - obj2Height / 2 && obj1yPos - obj1Height / 2 +collisionAdjuster < obj2yPos + obj2Height)
             return true;
     }
 }
