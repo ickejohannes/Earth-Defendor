@@ -91,8 +91,14 @@ function updateCanvas() {
 
     ctx.drawImage(backgroundImage, 0, 0);
 
-    ctx.font = '30px Arial';
-    ctx.fillText(`Score: ${score}`, 40, 40);
+    ctx.font = '30px Times';
+    ctx.shadowColor="red";
+    ctx.shadowBlur = 7;
+    ctx.lineWidth=5;
+    ctx.strokeText(`SCORE: ${score}`, 40, 60);
+    ctx.shadowBlur=0;
+    ctx.fillStyle="white";
+    ctx.fillText(`SCORE: ${score}`, 40, 60);
     
    
     for (iterator = 0; iterator < shots.length; iterator += 1) {
