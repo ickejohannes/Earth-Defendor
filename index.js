@@ -3,6 +3,7 @@
 // player ship currently from here https://pixabay.com/vectors/rocket-spaceship-space-shuttle-nasa-147466/
 // background image: https://pixabay.com/illustrations/universe-sky-stars-space-cosmos-2742113/#
 // robot voice: https://lingojam.com/RobotVoiceGenerator
+// <a href="https://www.vecteezy.com/free-vector/earth">Earth Vectors by Vecteezy</a>
 
 
 const splashScreen = document.getElementById("splashScreen");
@@ -22,6 +23,9 @@ let level = 1;
 
 const backgroundImage = new Image();
 backgroundImage.src = "./assets/images/bg.jpg";
+
+const earthImage = new Image();
+earthImage.src = "./assets/images/Earth.png"
 
 
 const shipImage = new Image();
@@ -90,6 +94,7 @@ function updateCanvas() {
     checkForLevelIncrease();
 
     ctx.drawImage(backgroundImage, 0, 0);
+    ctx.drawImage(earthImage, playerPosX-50, playerPosY-50, 100, 100)
 
     ctx.font = '30px Times';
     ctx.shadowColor="red";
