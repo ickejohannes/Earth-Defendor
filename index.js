@@ -1,7 +1,11 @@
-//player laser is from here https://redfoc.com/item/space-shooter-game-assets/
+//player laser and enemy ships are from here https://redfoc.com/item/space-shooter-game-assets/
 //sound effects shot and explosion are from here https://www.playonloop.com/sound-effects-for-videos/boom-slam-impact-sounds/
+// player ship currently from here https://pixabay.com/vectors/rocket-spaceship-space-shuttle-nasa-147466/
+// background image: https://pixabay.com/illustrations/universe-sky-stars-space-cosmos-2742113/#
+// robot voice: https://lingojam.com/RobotVoiceGenerator
 
 
+const splashScreen = document.getElementById("splashScreen");
 const canvas = document.querySelector("canvas");
 let ctx = canvas.getContext("2d");
 
@@ -9,6 +13,8 @@ const audio = new Audio('./assets/audio/game.mp3');
 const playerExplodesSound = new Audio("./assets/audio/playerExplodes.wav");
 const enemyShipExplodesSound = new Audio("./assets/audio/enemyShipExplodes.wav");
 const playerShootsSound = new Audio("./assets/audio/playerShoots.wav");
+
+let gameStarted = false;
 
 let score = 0;
 
@@ -37,7 +43,7 @@ xBaseSpeed = 2;
 yBaseSpeed = -2;
 
 
-const enemyArray = [];
+let enemyArray = [];
 const enemyImage = new Image();
 enemyImage.src = "./assets/images/enemy_1.png";
 let enemySpeed = 1;
@@ -56,11 +62,25 @@ const explosionHeigth = 60;
 
 
 
+document.addEventListener("keydown", event => {
+    if (event.code == "Space") {
+        event.preventDefault();
+        if (!gameStarted) {
+            canvas.setAttribute("style", "");
+            splashScreen.setAttribute("style", "display: none");
+            start();
+            gameStarted = true;
+            }
+        shoot();
+    } else if (event.key == "ArrowLeft") {
+        event.preventDefault();
+        rotateShipClockwise();
+    } if (event.key == "ArrowRight") {
+        event.preventDefault();
+        rotateShipCounterClockwise();
+      };
+})
 
-window.onload = () => {
-    start();
-};
-  
 function start() {
     updateCanvas();
     intervalID = setInterval(createEnemy, enemyBaseFrequency); 
@@ -103,7 +123,7 @@ function updateCanvas() {
             ctx.drawImage(explosionImage1, playerPosX, playerPosY, explosionWidth, explosionHeigth);
             ctx.drawImage(explosionImage1, playerPosX, playerPosY, explosionWidth, explosionHeigth);
             playerExplodesSound.play();
-            gameOverPrinter();
+            gameOver();
             return;
         }
         ctx.drawImage(enemyImage, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight);
@@ -120,18 +140,7 @@ function updateCanvas() {
     requestAnimationFrame(updateCanvas);
 }
     
-document.addEventListener("keydown", event => {
-    if (event.code == "Space") {
-        event.preventDefault();
-        shoot();
-    } else if (event.key == "ArrowLeft") {
-        event.preventDefault();
-        rotateShipClockwise();
-    } if (event.key == "ArrowRight") {
-        event.preventDefault();
-        rotateShipCounterClockwise();
-      };
-})
+
 
 
 
@@ -227,8 +236,25 @@ function collisionCheck(obj1xPos, obj1yPos, obj1Width, obj1Height, obj2xPos, obj
     }
 }
 
-function gameOverPrinter() {
-    console.log("Game over!");
+function gameOver() {
+    /* For later user with highscore */
+    // window.prompt("Game over! Enter your name and hit enter. Then press space to play again.");
+    window.alert("Game over! Do you want to play again? Hit space.");
+    resetGame();
+}
+
+function resetGame() {
+    shots = [];
+    level = 1;
+    score = 0;
+    enemyArray = []
+    gameStarted = false;
+    // clearInterval(intervalID);
+    var id = window.setTimeout(function() {}, 0);
+
+    while (id--) {
+        window.clearTimeout(id);
+}
 }
 
 function checkForLevelIncrease() {
