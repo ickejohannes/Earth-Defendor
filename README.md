@@ -1,4 +1,4 @@
-Earth Defendor
+# Earth Defendor
 
 Description
 An 80s style arcade game where you are defending earth from alien spaceships that come at you from all directions.
