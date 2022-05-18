@@ -25,7 +25,7 @@ let level = 1;
 let increaseLevelEveryScoreMultiple = 20;
 
 const backgroundImage = new Image();
-backgroundImage.src = "assets/images/bg.jpg";
+backgroundImage.src = "../assets/images/bg.jpg";
 
 const earthImage = new Image();
 earthImage.src = "../assets/images/Earth.png"
