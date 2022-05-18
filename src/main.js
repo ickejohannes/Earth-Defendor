@@ -1,36 +1,37 @@
-//player laser and enemy ships are from here https://redfoc.com/item/space-shooter-game-assets/
+//player laser, bombs and enemy ships are from here https://redfoc.com/item/space-shooter-game-assets/
 //sound effects shot and explosion are from here https://www.playonloop.com/sound-effects-for-videos/boom-slam-impact-sounds/
 // player ship currently from here https://pixabay.com/vectors/rocket-spaceship-space-shuttle-nasa-147466/
 // background image: https://pixabay.com/illustrations/universe-sky-stars-space-cosmos-2742113/#
 // robot voice: https://lingojam.com/RobotVoiceGenerator
 // <a href="https://www.vecteezy.com/free-vector/earth">Earth Vectors by Vecteezy</a>
 
+import { Bomb } from "./Bomb.js";
 
 const splashScreen = document.getElementById("splashScreen");
 const canvas = document.querySelector("canvas");
 let ctx = canvas.getContext("2d");
 
-const audio = new Audio('./assets/audio/game.mp3');
-const playerExplodesSound = new Audio("./assets/audio/playerExplodes.wav");
-const enemyShipExplodesSound = new Audio("./assets/audio/enemyShipExplodes.wav");
-const playerShootsSound = new Audio("./assets/audio/playerShoots.wav");
+const audio = new Audio('../assets/audio/game.mp3');
+const playerExplodesSound = new Audio("../assets/audio/playerExplodes.wav");
+const enemyShipExplodesSound = new Audio("../assets/audio/enemyShipExplodes.wav");
+const playerShootsSound = new Audio("../assets/audio/playerShoots.wav");
 
 let gameStarted = false;
 
 let score = 0;
 
 let level = 1;
-let increaseLevelEveryScoreMultiple = 10;
+let increaseLevelEveryScoreMultiple = 30;
 
 const backgroundImage = new Image();
-backgroundImage.src = "./assets/images/bg.jpg";
+backgroundImage.src = "../assets/images/bg.jpg";
 
 const earthImage = new Image();
-earthImage.src = "./assets/images/Earth.png"
+earthImage.src = "../assets/images/Earth.png"
 
 
 const shipImage = new Image();
-shipImage.src = "./assets/images/rocket-147466_640.png";
+shipImage.src = "../assets/images/rocket-147466_640.png";
 let playerPosX = 700;
 let playerPosY = 400;   
 let playerWidth = 50;
@@ -41,36 +42,42 @@ let rotationSpeed = rotationSpeedConst;
 
 
 const shotImage = new Image();
-shotImage.src = "./assets/images/shot.png"
+shotImage.src = "../assets/images/shot.png"
 let shots = [];
 let shotWidth = 10;
 let shotHeight = 10;
-xBaseSpeed = 2;
-yBaseSpeed = -2;
+let xBaseSpeed = 2;
+let yBaseSpeed = -2;
 
 
 let enemyArray = [];
 const enemyImage = new Image();
-enemyImage.src = "./assets/images/enemy_1.png";
-let enemySpeed = 1;
-let enemyBaseFrequency = 1000;
+enemyImage.src = "../assets/images/enemy_1.png";
+let enemySpawnRate = 1000;
+
+let bombArray = [];
+const bombImage = new Image();
+bombImage.src = "../assets/images/bomb.png"
+let bombSpawnRate = 20000;
+let bombWidth = 50;
+let bombHeight = 50;
 
 const explosionImage1 = new Image();
-explosionImage1.src = "./assets/images/explosion1.png"
+explosionImage1.src = "../assets/images/explosion1.png"
 const explosionImage2 = new Image();
-explosionImage2.src = "./assets/images/explosion2.png"
+explosionImage2.src = "../assets/images/explosion2.png"
 const explosionImage3 = new Image();
-explosionImage3.src = "./assets/images/explosion3.png"
+explosionImage3.src = "../assets/images/explosion3.png"
 const explosionImage4 = new Image();
-explosionImage4.src = "./assets/images/explosion4.png"
+explosionImage4.src = "../assets/images/explosion4.png"
 const explosionWidth = 60;
 const explosionHeigth = 60;
 
 // collisionAdjuster allows to increase/decrease size of hit boxes relative to image size. the higher the number the smaller the hitbox
 const collisionAdjuster = 10;
 
-let leftArrowInterval;
-let rightArrowInterval;
+let createEnemyIntervalID;
+let createBombIntervalID;
 
 
 // The EventListener starts the game (when it is not running yet), calls the shoot() function to create shots and the rotate functions to rotate the ship
@@ -98,69 +105,104 @@ document.addEventListener("keydown", event => {
 // Start function is called when space is pressed for the first time. It calls updateCanvas and begins spawning of enemies via setInterval.
 function start() {
     updateCanvas();
-    intervalID = setInterval(createEnemy, enemyBaseFrequency); 
+    createEnemyIntervalID = setInterval(createEnemy, enemySpawnRate);
+    createBombIntervalID = setInterval(createBomb, bombSpawnRate);
 }
+
+let bomb = new Bomb(0, 0, 100, 100)
 
 // updateCanvas() draws background, Earth, player and enemy ships and player shots. For every shot it checks for collision with every enemy ship. For every enemy ship it checks for collision with player. If an enemy ship collides with the player it calls gameOver()
 function updateCanvas() {
+    // game logic
     checkForLevelIncrease();
 
+    // drawing background and score
     ctx.drawImage(backgroundImage, 0, 0);
-    ctx.drawImage(earthImage, playerPosX-50, playerPosY-50, 100, 100)
-
+    ctx.drawImage(earthImage, playerPosX - 50, playerPosY - 50, 100, 100)
     ctx.font = '30px Times';
-    ctx.shadowColor="red";
+    ctx.shadowColor = "red";
     ctx.shadowBlur = 7;
-    ctx.lineWidth=5;
+    ctx.lineWidth = 5;
     ctx.strokeText(`SCORE: ${score}`, 40, 60);
-    ctx.shadowBlur=0;
-    ctx.fillStyle="white";
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = "white";
     ctx.fillText(`SCORE: ${score}`, 40, 60);
     
-   
-    for (iterator = 0; iterator < shots.length; iterator += 1) {
+    // drawing shots, checking for collisions with enemy ships, moving enemy ships
+    for (let iterator = 0; iterator < shots.length; iterator += 1) {
         let shot = shots[iterator];
-        for (i = 0; i < enemyArray.length; i += 1) {
+        for (let i = 0; i < enemyArray.length; i += 1) {
             let enemy = enemyArray[i];
             
             if (collisionCheck(shot.xPos, shot.yPos, shotWidth, shotHeight, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight)) {
+                makeEnemyExplode(enemy);
                 enemyArray.splice(i, 1);
-                ctx.drawImage(explosionImage1, enemy.enemyXPos, enemy.enemyYPos, explosionWidth, explosionHeigth);
-                ctx.drawImage(explosionImage2, enemy.enemyXPos, enemy.enemyYPos, explosionWidth, explosionHeigth);
-                /* We could add these two additional explosion stages but they would have to be delayed a bit
-                ctx.drawImage(explosionImage3, enemy.enemyXPos, enemy.enemyYPos, explosionWidth, explosionHeigth);
-                ctx.drawImage(explosionImage4, enemy.enemyXPos, enemy.enemyYPos, explosionWidth, explosionHeigth);*/
-                enemyShipExplodesSound.cloneNode(true).play();
                 shots.splice(iterator, 1);
                 score += 1;
             }
         }
         ctx.drawImage(shotImage, shot.xPos, shot.yPos, shotWidth, shotHeight);
-        shot.yPos -= shot.ySpeed;
         shot.xPos += shot.xSpeed;
+        shot.yPos -= shot.ySpeed;
     }
 
-    for (iterator = 0; iterator < enemyArray.length; iterator += 1) {
+    // drawing bombs
+    for (let i = 0; i < bombArray.length; i += 1) {
+        let bomb = bombArray[i];
+
+        ctx.drawImage(bombImage, bomb.xPos, bomb.yPos, bombWidth, bombHeight);
+    }
+
+    // moving bombs
+    for (let i = 0; i < bombArray.length; i += 1) {
+        let bomb = bombArray[i];
+
+        bomb.xPos += bomb.xSpeed;
+        bomb.yPos += bomb.ySpeed;
+    }
+
+    // checking for collisions between bombs and shots
+    for (let i = 0; i < bombArray.length; i += 1) {
+        let bomb = bombArray[i];
+        for (let k = 0; k < shots.length; k += 1) {
+            let shot = shots[k]
+            if (collisionCheck(shot.xPos, shot.yPos, shotWidth, shotHeight, bomb.xPos, bomb.yPos, bombWidth, bombHeight)) {
+                bombExplode()
+            }
+        }
+    }
+
+
+    // drawing enemies and checking for collision with player
+    for (let iterator = 0; iterator < enemyArray.length; iterator += 1) {
         let enemy = enemyArray[iterator];
         if (collisionCheck(playerPosX, playerPosY, playerWidth, playerHeight, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight)) {
-            console.log(playerPosX, playerPosY)
-            ctx.drawImage(explosionImage1, playerPosX-playerWidth/2-5, playerPosY-playerHeight/2-5, explosionWidth, explosionHeigth);
+            ctx.drawImage(explosionImage1, playerPosX - playerWidth / 2 - 5, playerPosY - playerHeight / 2 - 5, explosionWidth, explosionHeigth);
             playerExplodesSound.play();
             setTimeout(gameOver, 50);
             return;
         }
         ctx.drawImage(enemyImage, enemy.enemyXPos, enemy.enemyYPos, enemy.enemyWidth, enemy.enemyHeight);
         enemy.enemyXPos += enemy.enemyXSpeed;
-        enemy.enemyYPos += enemy.enemyYSpeed;  
+        enemy.enemyYPos += enemy.enemyYSpeed;
     }
 
+    // drawing player
     ctx.save();
-    ctx.translate(playerPosX,playerPosY);
+    ctx.translate(playerPosX, playerPosY);
     ctx.rotate(shipRotation * Math.PI / 180);
     ctx.drawImage(shipImage, -25, -25, 50, 50);
     ctx.restore();
 
     requestAnimationFrame(updateCanvas);
+}
+
+
+
+function makeEnemyExplode(opponent) {
+    ctx.drawImage(explosionImage1, opponent.enemyXPos, opponent.enemyYPos, explosionWidth, explosionHeigth);
+    ctx.drawImage(explosionImage2, opponent.enemyXPos, opponent.enemyYPos, explosionWidth, explosionHeigth);
+    enemyShipExplodesSound.cloneNode(true).play();
 }
 
 function rotateShipClockwise() {
@@ -176,7 +218,7 @@ function shoot() {
     shots.push(new Shot(shipRotation));
     audio.play();
     playerShootsSound.cloneNode(true).play();
-   
+
 }
 
 
@@ -199,14 +241,31 @@ class Enemy {
         this.enemyXSpeed = xSpeed;
         this.enemyYSpeed = ySpeed;
     };
-    
-  }
+
+}
 
 function createEnemy() {
     let enemySpawnDirection = chooseRandomSpawnDirection();
     let enemySpawnPosition = createSpawnPosition(enemySpawnDirection);
-    let enemySpeed = createEnemySpeed(enemySpawnDirection);
+    let enemySpeed = createSpeed(enemySpawnDirection);
     enemyArray.push(new Enemy(enemySpawnPosition[0], enemySpawnPosition[1], enemySpeed[0], enemySpeed[1]));
+}
+
+function createBomb() {
+    let bombSpawnDirection = chooseRandomSpawnDirection();
+    let bombSpawnPosition = createSpawnPosition(bombSpawnDirection);
+    let bombSpeed = createSpeed(bombSpawnDirection);
+    bombArray.push(new Bomb(bombSpawnPosition[0], bombSpawnPosition[1], bombSpeed[0], bombSpeed[1]));
+}
+
+function bombExplode() {
+    for (let i = 0; i < enemyArray.length; i += 1) {
+        makeEnemyExplode(enemyArray[i]);
+        score += 1;
+    }
+    enemyArray = [];
+    bombArray = [];
+    shots = [];
 }
 
 // this function generates a random direction for the enemy to come from
@@ -238,22 +297,22 @@ function createSpawnPosition(direction) {
 }
 
 // this function generates a random speed for the enemy depending on the direction he is coming from. Eg when the enemy is coming from the left, he is given a positive horizontal speed of one, vertical speed can vary between 0.5 and -0.5
-function createEnemySpeed(direction) {
+function createSpeed(direction) {
     if (direction == "left") {
-        return [1, Math.random()-0.5];
+        return [1, Math.random() - 0.5];
     } else if (direction == "top") {
-        return [Math.random()-0.5, 1];
+        return [Math.random() - 0.5, 1];
     } else if (direction == "right") {
-        return [-1, -(Math.random()-0.5)];
+        return [-1, -(Math.random() - 0.5)];
     } else {
-        return [-(Math.random()-0.5) , -1];
+        return [-(Math.random() - 0.5), -1];
     }
 }
 
 // the collider is adjusted using collisionAdjuster: as we use the image height and width for players/enemies/shots to determine collision, without adjustment collisions will appear to happen too early (as images are boxes), so we shrink the image dimensions a bit for the collider.
 function collisionCheck(obj1xPos, obj1yPos, obj1Width, obj1Height, obj2xPos, obj2yPos, obj2Width, obj2Height) {
-    if (obj1xPos + obj1Width / 2 -collisionAdjuster > obj2xPos - obj2Width / 2 && obj1xPos - obj1Width / 2 +collisionAdjuster < obj2xPos + obj2Width) {
-        if (obj1yPos + obj1Height / 2 -collisionAdjuster > obj2yPos - obj2Height / 2 && obj1yPos - obj1Height / 2 +collisionAdjuster < obj2yPos + obj2Height)
+    if (obj1xPos + obj1Width / 2 - collisionAdjuster > obj2xPos - obj2Width / 2 && obj1xPos - obj1Width / 2 + collisionAdjuster < obj2xPos + obj2Width) {
+        if (obj1yPos + obj1Height / 2 - collisionAdjuster > obj2yPos - obj2Height / 2 && obj1yPos - obj1Height / 2 + collisionAdjuster < obj2yPos + obj2Height)
             return true;
     }
 }
@@ -269,21 +328,21 @@ function resetGame() {
     shots = [];
     level = 1;
     score = 0;
-    enemyArray = []
+    enemyArray = [];
+    bombArray = [];
     gameStarted = false;
-    // clearInterval(intervalID);
-    var id = window.setTimeout(function() {}, 0);
-
+    // This clears all Timeouts
+    var id = window.setTimeout(function () { }, 0);
     while (id--) {
         window.clearTimeout(id);
-}
+    }
 }
 
 // every time the score is bigger than level * increaseLevelEveryScoreMultiple we increase it, this increases enemy spawn frequency
 function checkForLevelIncrease() {
     if (score > increaseLevelEveryScoreMultiple * level) {
         level += 1;
-        clearInterval(intervalID);
-        setInterval(createEnemy, enemyBaseFrequency/level)
+        clearInterval(createEnemyIntervalID);
+        setInterval(createEnemy, enemySpawnRate / level)
     }
 }
