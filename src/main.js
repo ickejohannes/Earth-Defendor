@@ -5,7 +5,7 @@
 // robot voice: https://lingojam.com/RobotVoiceGenerator
 // <a href="https://www.vecteezy.com/free-vector/earth">Earth Vectors by Vecteezy</a>
 
-import { Bomb } from "src/Bomb.js";
+import { Bomb } from "Bomb.js";
 
 const splashScreen = document.getElementById("splashScreen");
 const canvas = document.querySelector("canvas");
