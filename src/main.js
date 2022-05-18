@@ -5,16 +5,16 @@
 // robot voice: https://lingojam.com/RobotVoiceGenerator
 // <a href="https://www.vecteezy.com/free-vector/earth">Earth Vectors by Vecteezy</a>
 
-import { Bomb } from "/Bomb.js";
+import { Bomb } from "./Bomb.js";
 
 const splashScreen = document.getElementById("splashScreen");
 const canvas = document.querySelector("canvas");
 let ctx = canvas.getContext("2d");
 
-const audio = new Audio('/assets/audio/game.mp3');
-const playerExplodesSound = new Audio("/assets/audio/playerExplodes.wav");
-const enemyShipExplodesSound = new Audio("/assets/audio/enemyShipExplodes.wav");
-const playerShootsSound = new Audio("/assets/audio/playerShoots.wav");
+const audio = new Audio('./assets/audio/game.mp3');
+const playerExplodesSound = new Audio("./assets/audio/playerExplodes.wav");
+const enemyShipExplodesSound = new Audio("./assets/audio/enemyShipExplodes.wav");
+const playerShootsSound = new Audio("./assets/audio/playerShoots.wav");
 
 let gameStarted = false;
 
@@ -25,14 +25,14 @@ let level = 1;
 let increaseLevelEveryScoreMultiple = 20;
 
 const backgroundImage = new Image();
-backgroundImage.src = "/assets/images/bg.jpg";
+backgroundImage.src = "./assets/images/bg.jpg";
 
 const earthImage = new Image();
-earthImage.src = "/assets/images/Earth.png";
+earthImage.src = "./assets/images/Earth.png";
 
 
 const shipImage = new Image();
-shipImage.src = "/assets/images/rocket-147466_640.png";
+shipImage.src = "./assets/images/rocket-147466_640.png";
 let playerPosX = 700;
 let playerPosY = 400;   
 let playerWidth = 50;
@@ -43,7 +43,7 @@ let rotationSpeed = rotationSpeedConst;
 
 
 const shotImage = new Image();
-shotImage.src = "/assets/images/shot.png"
+shotImage.src = "./assets/images/shot.png"
 let shots = [];
 let shotWidth = 10;
 let shotHeight = 10;
@@ -53,26 +53,26 @@ let yBaseSpeed = -2;
 
 let enemyArray = [];
 const enemyImage = new Image();
-enemyImage.src = "/assets/images/enemy_1.png";
+enemyImage.src = "./assets/images/enemy_1.png";
 let enemySpawnRate = 1000;
 
 let enemyAngerLevel = 1;
 
 let bombArray = [];
 const bombImage = new Image();
-bombImage.src = "/assets/images/bomb.png"
+bombImage.src = "./assets/images/bomb.png"
 let bombSpawnRate = 20000;
 let bombWidth = 50;
 let bombHeight = 50;
 
 const explosionImage1 = new Image();
-explosionImage1.src = "/assets/images/explosion1.png"
+explosionImage1.src = "./assets/images/explosion1.png"
 const explosionImage2 = new Image();
-explosionImage2.src = "/assets/images/explosion2.png"
+explosionImage2.src = "./assets/images/explosion2.png"
 const explosionImage3 = new Image();
-explosionImage3.src = "/assets/images/explosion3.png"
+explosionImage3.src = "./assets/images/explosion3.png"
 const explosionImage4 = new Image();
-explosionImage4.src = "/assets/images/explosion4.png"
+explosionImage4.src = "./assets/images/explosion4.png"
 const explosionWidth = 60;
 const explosionHeigth = 60;
 
