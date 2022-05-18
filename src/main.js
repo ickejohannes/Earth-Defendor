@@ -116,7 +116,6 @@ function start() {
 
 // updateCanvas() draws background, Earth, player and enemy ships and player shots. For every shot it checks for collision with every enemy ship. For every enemy ship it checks for collision with player. If an enemy ship collides with the player it calls gameOver()
 function updateCanvas() {
-    console.log(enemyAngerLevel)
     // game logic
     checkForLevelIncrease();
 
