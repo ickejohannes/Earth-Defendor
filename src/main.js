@@ -344,7 +344,7 @@ function resetGame() {
 // every time the score is bigger than level * increaseLevelEveryScoreMultiple we increase it, this increases enemy spawn frequency
 function checkForLevelIncrease() {
     if (score > increaseLevelEveryScoreMultiple * level) {
-        level += 1;
+        level += 0.5;
         clearInterval(createEnemyIntervalID);
         setInterval(createEnemy, enemySpawnRate / level * enemyAngerLevel)
     }
