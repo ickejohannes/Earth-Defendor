@@ -19,9 +19,10 @@ const playerShootsSound = new Audio("../assets/audio/playerShoots.wav");
 let gameStarted = false;
 
 let score = 0;
+const increaseScoreRate = 1000;
 
 let level = 1;
-let increaseLevelEveryScoreMultiple = 30;
+let increaseLevelEveryScoreMultiple = 20;
 
 const backgroundImage = new Image();
 backgroundImage.src = "../assets/images/bg.jpg";
@@ -55,6 +56,8 @@ const enemyImage = new Image();
 enemyImage.src = "../assets/images/enemy_1.png";
 let enemySpawnRate = 1000;
 
+let enemyAngerLevel = 1;
+
 let bombArray = [];
 const bombImage = new Image();
 bombImage.src = "../assets/images/bomb.png"
@@ -78,6 +81,7 @@ const collisionAdjuster = 10;
 
 let createEnemyIntervalID;
 let createBombIntervalID;
+let scoreIntervalID;
 
 
 // The EventListener starts the game (when it is not running yet), calls the shoot() function to create shots and the rotate functions to rotate the ship
@@ -107,12 +111,12 @@ function start() {
     updateCanvas();
     createEnemyIntervalID = setInterval(createEnemy, enemySpawnRate);
     createBombIntervalID = setInterval(createBomb, bombSpawnRate);
+    scoreIntervalID = setInterval(increaseScore, increaseScoreRate);
 }
-
-let bomb = new Bomb(0, 0, 100, 100)
 
 // updateCanvas() draws background, Earth, player and enemy ships and player shots. For every shot it checks for collision with every enemy ship. For every enemy ship it checks for collision with player. If an enemy ship collides with the player it calls gameOver()
 function updateCanvas() {
+    console.log(enemyAngerLevel)
     // game logic
     checkForLevelIncrease();
 
@@ -138,7 +142,6 @@ function updateCanvas() {
                 makeEnemyExplode(enemy);
                 enemyArray.splice(i, 1);
                 shots.splice(iterator, 1);
-                score += 1;
             }
         }
         ctx.drawImage(shotImage, shot.xPos, shot.yPos, shotWidth, shotHeight);
@@ -261,11 +264,11 @@ function createBomb() {
 function bombExplode() {
     for (let i = 0; i < enemyArray.length; i += 1) {
         makeEnemyExplode(enemyArray[i]);
-        score += 1;
     }
     enemyArray = [];
     bombArray = [];
     shots = [];
+    enemyAngerLevel += 0.2
 }
 
 // this function generates a random direction for the enemy to come from
@@ -343,6 +346,10 @@ function checkForLevelIncrease() {
     if (score > increaseLevelEveryScoreMultiple * level) {
         level += 1;
         clearInterval(createEnemyIntervalID);
-        setInterval(createEnemy, enemySpawnRate / level)
+        setInterval(createEnemy, enemySpawnRate / level * enemyAngerLevel)
     }
+}
+
+function increaseScore() {
+    score += 1;
 }
