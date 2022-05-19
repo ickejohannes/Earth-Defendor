@@ -11,6 +11,7 @@ const body = document.getElementById("body");
 const splashScreen = document.getElementById("splashScreen");
 const canvas = document.querySelector("canvas");
 let ctx = canvas.getContext("2d");
+const highscore = document.getElementById("highscore");
 
 const audio = new Audio('assets/audio/game.mp3');
 const playerExplodesSound = new Audio("assets/audio/playerExplodes.wav");
@@ -21,6 +22,13 @@ let gameStarted = false;
 
 let score = 0;
 const increaseScoreRate = 1000;
+
+if (localStorage.getItem("highscore") == null) {
+    highscore.innerHTML = "The SUPREME DEFENDOR has not shown himself/herself yet!";
+} else {
+    console.log(typeof localStorage.getItem("highscore"))
+    highscore.innerHTML = `SUPREME DEFENDOR: ${localStorage.getItem("supremeDefendor")}.<br><br>The DEFENDOR achieved a score of: ${localStorage.getItem("highscore")} galactic seconds.`;
+}
 
 let level = 1;
 let increaseLevelEveryScoreMultiple = 20;
@@ -86,9 +94,7 @@ let scoreIntervalID;
 
 // Making sure the page is loaded completely before displaying 
 window.addEventListener('load', (event) => {
-    console.log("fully loaded")
     splashScreen.setAttribute("style", "display: flex");
-    console.log(splashScreen.style)
   });
 
 
@@ -330,7 +336,13 @@ function collisionCheck(obj1xPos, obj1yPos, obj1Width, obj1Height, obj2xPos, obj
 function gameOver() {
     /* For later user with highscore */
     // window.prompt("Game over! Enter your name and hit enter. Then press space to play again.");
-    window.alert("Game over! Do you want to play again? Hit space.");
+    if (localStorage.getItem("highscore") == null || score > parseInt(localStorage.getItem("highscore"))) {
+        let input = window.prompt("You are the SUPREME DEFENDOR! Please enter your name:");
+        localStorage.setItem("highscore", score);
+        localStorage.setItem("supremeDefendor", input);
+    } else {
+        window.alert("Game over! Do you want to play again? Hit space.");
+    }
     resetGame();
 }
 
