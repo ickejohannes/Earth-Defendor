@@ -86,7 +86,9 @@ let scoreIntervalID;
 
 // Making sure the page is loaded completely before displaying 
 window.addEventListener('load', (event) => {
-    body.setAttribute("style", "");
+    console.log("fully loaded")
+    splashScreen.setAttribute("style", "display: flex");
+    console.log(splashScreen.style)
   });
 
 
@@ -99,7 +101,7 @@ document.addEventListener("keydown", event => {
             splashScreen.setAttribute("style", "display: none");
             start();
             gameStarted = true;
-            }
+        }
         shoot();
     } else if (event.key == "ArrowLeft") {
         event.preventDefault();
