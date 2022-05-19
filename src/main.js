@@ -7,6 +7,7 @@
 
 import { Bomb } from "./Bomb.js";
 
+const body = document.getElementById("body");
 const splashScreen = document.getElementById("splashScreen");
 const canvas = document.querySelector("canvas");
 let ctx = canvas.getContext("2d");
@@ -82,6 +83,11 @@ const collisionAdjuster = 10;
 let createEnemyIntervalID;
 let createBombIntervalID;
 let scoreIntervalID;
+
+// Making sure the page is loaded completely before displaying 
+window.addEventListener('load', (event) => {
+    body.setAttribute("style", "");
+  });
 
 
 // The EventListener starts the game (when it is not running yet), calls the shoot() function to create shots and the rotate functions to rotate the ship
