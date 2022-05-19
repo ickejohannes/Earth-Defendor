@@ -17,6 +17,7 @@ const audio = new Audio('assets/audio/game.mp3');
 const playerExplodesSound = new Audio("assets/audio/playerExplodes.wav");
 const enemyShipExplodesSound = new Audio("assets/audio/enemyShipExplodes.wav");
 const playerShootsSound = new Audio("assets/audio/playerShoots.wav");
+const intergalacticBombSound = new Audio("assets/audio/intergalacticbomb.wav")
 
 let gameStarted = false;
 
@@ -183,7 +184,8 @@ function updateCanvas() {
         for (let k = 0; k < shots.length; k += 1) {
             let shot = shots[k]
             if (collisionCheck(shot.xPos, shot.yPos, shotWidth, shotHeight, bomb.xPos, bomb.yPos, bombWidth, bombHeight)) {
-                bombExplode()
+                intergalacticBombSound.play();
+                bombExplode();
             }
         }
     }

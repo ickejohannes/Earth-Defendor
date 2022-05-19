@@ -36,3 +36,7 @@ p {
     align-items: center;
     background: url(./assets/images/bg.jpg);
 }
+
+#credits-link {
+  padding: 50px;
+}
