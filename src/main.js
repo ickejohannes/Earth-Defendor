@@ -27,7 +27,7 @@ if (localStorage.getItem("highscore") == null) {
     highscore.innerHTML = "The SUPREME DEFENDOR has not shown himself/herself yet!";
 } else {
     console.log(typeof localStorage.getItem("highscore"))
-    highscore.innerHTML = `SUPREME DEFENDOR: ${localStorage.getItem("supremeDefendor")}.<br><br>The DEFENDOR achieved a score of: ${localStorage.getItem("highscore")} galactic seconds.`;
+    highscore.innerHTML = `The SUPREME DEFENDOR is currently ${localStorage.getItem("supremeDefendor")}.<br><br>The DEFENDOR achieved a score of: ${localStorage.getItem("highscore")} galactic seconds.`;
 }
 
 let level = 1;
